@@ -1,0 +1,27 @@
+# dependencies
+/node_modules
+
+# testing
+/coverage
+
+# production
+/build
+/dist
+
+# misc
+.DS_Store
+.env*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# IDEs
+.idea
+.vscode
+/data/
+/temp/
+
+# Sentry Config File
+.sentryclirc

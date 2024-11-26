@@ -4,8 +4,20 @@
   "description": "TON Transactions App",
   "main": "index.js",
   "scripts": {
+    "build": "npx tsc",
+    "prestart": "npm run build",
+    "start": "node dist/src/index.js",
+    "predev": "npm run build",
+    "dev": "concurrently \"tsc -w\"  \"nodemon dist/index.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Dinesh Bala",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.0"
+  }
 }
