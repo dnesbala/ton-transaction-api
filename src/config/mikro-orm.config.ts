@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { defineConfig } from "@mikro-orm/core";
 import { PostgreSqlDriver } from "@mikro-orm/postgresql";
 import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
+import { Migrator } from "@mikro-orm/migrations";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ export default defineConfig({
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT) | 5432,
   debug: true,
+  extensions: [Migrator],
   migrations: {
     path: "dist/migrations",
     pathTs: "src/migrations",

@@ -1,7 +1,22 @@
-import { Entity, PrimaryKey } from "@mikro-orm/core";
+import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 
 @Entity()
 export class Transaction {
   @PrimaryKey()
   id!: number;
+
+  @Property()
+  accountAddress!: string;
+
+  @Property()
+  timestamp!: Date;
+
+  @Property()
+  transactionHash!: string;
+
+  @Property()
+  walletAddress?: string;
+
+  @Property({ columnType: "bigint" })
+  totalFees?: bigint;
 }
