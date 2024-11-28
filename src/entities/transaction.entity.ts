@@ -14,9 +14,6 @@ export class Transaction {
   @Property()
   transactionHash!: string;
 
-  @Property()
-  walletAddress?: string;
-
   @Property({ columnType: "bigint" })
   totalFees?: bigint;
 }

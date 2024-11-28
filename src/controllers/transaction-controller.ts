@@ -48,7 +48,6 @@ export async function fetchTransactions(req: Request, res: Response) {
           accountAddress: String(accountAddress),
           timestamp: new Date(),
           transactionHash: t.hash || "",
-          walletAddress: t.account,
           totalFees: BigInt(t.total_fees || 0),
         })
     );

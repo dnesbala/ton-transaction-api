@@ -45,16 +45,6 @@
           "length": 255,
           "mappedType": "string"
         },
-        "wallet_address": {
-          "name": "wallet_address",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 255,
-          "mappedType": "string"
-        },
         "total_fees": {
           "name": "total_fees",
           "type": "bigint",
