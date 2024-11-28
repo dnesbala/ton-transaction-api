@@ -1,5 +1,7 @@
 import express from "express";
 import { initDB } from "./config/db";
+import { TonTransaction } from "./models/ton-transaction.model";
+import { Transaction } from "./entities/transaction.entity";
 
 const startApp = async () => {
   const app = express();
@@ -47,12 +49,26 @@ const startApp = async () => {
       }
 
       const data = await response.json();
+      const transactions: TonTransaction[] = data.transactions;
 
       // store on db and return data
+      const entities: Transaction[] = transactions.map(
+        (t: Partial<TonTransaction>) =>
+          em.create(Transaction, {
+            accountAddress: String(accountAddress),
+            timestamp: new Date(),
+            transactionHash: t.hash || "",
+            walletAddress: t.account,
+            totalFees: BigInt(t.total_fees || 0),
+          })
+      );
+
+      await em.persistAndFlush(entities);
+
       return res.status(200).json({
         "status-code": 1,
         "status-message": "Transactions fetched successfully",
-        data: data?.transactions ?? [],
+        data: entities ?? [],
       });
     } catch (err) {
       console.log("Error fetching transactions:", err);
