@@ -12,8 +12,8 @@ export interface TonTransaction {
   total_fees: string;
   description: Description;
   block_ref: BlockRef;
-  in_msg: Msg;
-  out_msgs: Msg[];
+  in_msg: Message;
+  out_msgs: Message[];
   account_state_before: AccountState;
   account_state_after: AccountState;
 }
@@ -96,7 +96,7 @@ export enum DescriptionType {
   Ord = "ord",
 }
 
-export interface Msg {
+export interface Message {
   hash: string;
   source: string;
   destination: null | string;
