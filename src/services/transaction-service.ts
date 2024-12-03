@@ -11,6 +11,7 @@ import {
   TON_POOL_WINNER_NUMBER_DECIDED_EVENT_HASH,
   TON_POOL_WITHDRAW_EVENT_HASH,
 } from "../config/constants/ton-constants";
+import { decodeBase64ToCell } from "./ton-utils";
 
 export async function fetchAndStoreTransactions(
   accountAddress: string,
@@ -46,6 +47,10 @@ export async function fetchAndStoreTransactions(
 
     transactionsForEvents.push(
       ...eventMessages.map((eventMessage) => {
+        const value: string = getBalanceFromMessageContentBody(
+          eventMessage.message.message_content.body
+        );
+
         return {
           accountAddress,
           transactionCreatedAt: new Date(
@@ -53,7 +58,7 @@ export async function fetchAndStoreTransactions(
           ),
           eventType: eventMessage.eventType,
           transactionHash: eventMessage.message.hash,
-          balance: BigInt(eventMessage.message.value || 0),
+          balance: BigInt(value),
         };
       })
     );
@@ -83,6 +88,16 @@ function determineTonPoolEventMessages(
   }
 
   return eventTypes;
+}
+
+function getBalanceFromMessageContentBody(messageBody: string): string {
+  const decodedMessageContentBody = decodeBase64ToCell(
+    messageBody
+    // @ts-expect-error this should work
+  ).beginParse();
+
+  decodedMessageContentBody.loadUint(32);
+  return decodedMessageContentBody.loadCoins().toString(10);
 }
 
 export async function getTonTransactions(
