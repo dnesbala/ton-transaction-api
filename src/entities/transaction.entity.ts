@@ -9,11 +9,14 @@ export class Transaction {
   accountAddress!: string;
 
   @Property()
-  timestamp!: Date;
+  eventType!: string;
+
+  @Property()
+  transactionCreatedAt!: Date;
 
   @Property()
   transactionHash!: string;
 
   @Property({ columnType: "bigint" })
-  totalFees?: bigint;
+  balance?: bigint;
 }
