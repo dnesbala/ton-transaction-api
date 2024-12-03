@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
-
 import { getDB } from "../config/db";
-import { Transaction } from "../entities/transaction.entity";
-import { TonTransaction } from "../models/ton-transaction.model";
-import { getTonTransactions } from "../services/transaction-service";
+import { TransactionRepository } from "../repositories/transaction-repository";
+import { fetchAndStoreTransactions } from "../services/transaction-service";
+import { FetchTransactionsQueryParams } from "../config/types/query-params";
 
-export async function fetchTransactions(req: Request, res: Response) {
+export async function fetchTransactions(
+  req: Request<{}, {}, {}, FetchTransactionsQueryParams>,
+  res: Response
+) {
   const { accountAddress, date } = req.query;
 
   if (!accountAddress) {
@@ -15,52 +17,23 @@ export async function fetchTransactions(req: Request, res: Response) {
     });
   }
 
-  // Check on DB if transaction upto that date is available or not
   try {
     const { em } = await getDB();
+    const transactionRepo = new TransactionRepository(em);
 
-    const filters: any = { accountAddress };
-    if (date) {
-      filters.timestamp = {
-        $lte: new Date(date as string),
-      };
-    }
-
-    const dbTransactions = await em.find("Transaction", filters);
-
-    if (dbTransactions.length > 0) {
-      return res.status(200).json({
-        "status-code": 1,
-        "status-message": "Transactions fetched successfully",
-        data: dbTransactions,
-      });
-    }
-
-    // If not, Fetch data from TON Center and udpate DB
-    const transactions: TonTransaction[] = await getTonTransactions(
-      accountAddress.toString()
+    const transactions = await fetchAndStoreTransactions(
+      accountAddress.toString(),
+      date,
+      transactionRepo
     );
-
-    // store on db and return data
-    const entities: Transaction[] = transactions.map(
-      (t: Partial<TonTransaction>) =>
-        em.create(Transaction, {
-          accountAddress: String(accountAddress),
-          timestamp: new Date(),
-          transactionHash: t.hash || "",
-          totalFees: BigInt(t.total_fees || 0),
-        })
-    );
-
-    await em.persistAndFlush(entities);
 
     return res.status(200).json({
       "status-code": 1,
       "status-message": "Transactions fetched successfully",
-      data: entities ?? [],
+      data: transactions,
     });
   } catch (err) {
-    console.log("Error fetching transactions:", err);
+    console.error("Error fetching transactions:", err);
     return res.status(500).json({
       "status-code": -1,
       "status-message": "Error fetching transactions",
