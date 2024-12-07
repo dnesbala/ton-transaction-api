@@ -26,4 +26,33 @@ export class TransactionRepository {
     );
     await this.em.persistAndFlush(entities);
   }
+
+  async fetchUserBalance(walletAddress: string): Promise<BigInt> {
+    const userTransactions = await this.em.find(Transaction, {
+      accountAddress: walletAddress,
+    });
+
+    let totalDeposits = BigInt(0);
+    let totalWithdrawals = BigInt(0);
+    let totalWinnings = BigInt(0);
+
+    for (const transaction of userTransactions) {
+      const balance = transaction.balance ?? BigInt(0);
+      switch (transaction.eventType) {
+        case "DEPOSIT":
+          totalDeposits += balance;
+          break;
+        case "WITHDRAW":
+          totalWithdrawals += balance;
+          break;
+
+        case "WINNER_ASSIGNED":
+          totalWinnings += balance;
+          break;
+      }
+    }
+
+    const userBalance = totalDeposits + totalWinnings - totalWithdrawals;
+    return userBalance;
+  }
 }

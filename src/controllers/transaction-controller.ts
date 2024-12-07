@@ -41,3 +41,39 @@ export async function fetchTransactions(
     });
   }
 }
+
+export async function getUserBalance(
+  req: Request<{ walletAddress: string }>,
+  res: Response
+) {
+  const { walletAddress } = req.params;
+
+  if (!walletAddress) {
+    return res.status(400).json({
+      "status-code": -1,
+      "status-message": "Missing wallet address",
+    });
+  }
+
+  try {
+    const { em } = await getDB();
+    const transactionRepo = new TransactionRepository(em);
+
+    const userBalance = await transactionRepo.fetchUserBalance(walletAddress);
+
+    return res.status(200).json({
+      "status-code": 1,
+      "status-message": "User balance fetched successfully",
+      data: {
+        total_balance: Number(userBalance),
+      },
+    });
+  } catch (err) {
+    console.error("Error fetching user balance:", err);
+    return res.status(500).json({
+      "status-code": -1,
+      "status-message": "Error getting user balance",
+      error: err,
+    });
+  }
+}
