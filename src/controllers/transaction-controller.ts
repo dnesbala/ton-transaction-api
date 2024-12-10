@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import { getDB } from "../config/db";
 import { TransactionRepository } from "../repositories/transaction-repository";
 import { fetchAndStoreTransactions } from "../services/transaction-service";
-import { FetchTransactionsQueryParams } from "../config/types/query-params";
 import {
   sendErrorResponse,
   sendSuccessResponse,
 } from "../utils/response-utils";
+import { FetchTransactionsQueryParams } from "../schemas/transaction-schema";
 
 export async function fetchTransactions(
   req: Request<{}, {}, {}, FetchTransactionsQueryParams>,

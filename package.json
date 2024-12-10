@@ -22,7 +22,8 @@
     "@mikro-orm/reflection": "^6.4.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
-    "tonweb": "^0.0.66"
+    "tonweb": "^0.0.66",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
     "@mikro-orm/cli": "^6.4.0",

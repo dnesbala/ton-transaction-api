@@ -3,12 +3,17 @@ import {
   fetchTransactions,
   getUserBalance,
 } from "../controllers/transaction-controller";
-import { FetchTransactionsQueryParams } from "../config/types/query-params";
+import {
+  FetchTransactionsQueryParams,
+  fetchTransactionsQueryParamsSchema,
+} from "../schemas/transaction-schema";
+import { validateSchema } from "../utils/validate-request";
 
 export const transactionRoutes = Router();
 
 transactionRoutes.get(
   "/",
+  validateSchema(fetchTransactionsQueryParamsSchema, "query"),
   async (
     req: Request<{}, {}, {}, FetchTransactionsQueryParams>,
     res: Response,

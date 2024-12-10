@@ -20,7 +20,7 @@ export async function fetchAndStoreTransactions(
 ): Promise<Transaction[]> {
   const filters: any = { accountAddress };
   if (date) {
-    filters.timestamp = {
+    filters.transactionCreatedAt = {
       $lte: new Date(date),
     };
   }
