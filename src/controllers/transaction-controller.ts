@@ -3,6 +3,10 @@ import { getDB } from "../config/db";
 import { TransactionRepository } from "../repositories/transaction-repository";
 import { fetchAndStoreTransactions } from "../services/transaction-service";
 import { FetchTransactionsQueryParams } from "../config/types/query-params";
+import {
+  sendErrorResponse,
+  sendSuccessResponse,
+} from "../utils/response-utils";
 
 export async function fetchTransactions(
   req: Request<{}, {}, {}, FetchTransactionsQueryParams>,
@@ -11,10 +15,7 @@ export async function fetchTransactions(
   const { accountAddress, date } = req.query;
 
   if (!accountAddress) {
-    return res.status(400).json({
-      "status-code": -1,
-      "status-message": "Missing accountAddress",
-    });
+    return sendErrorResponse(res, 400, "Missing accountAddress");
   }
 
   try {
@@ -27,18 +28,14 @@ export async function fetchTransactions(
       transactionRepo
     );
 
-    return res.status(200).json({
-      "status-code": 1,
-      "status-message": "Transactions fetched successfully",
-      data: transactions,
-    });
+    return sendSuccessResponse(
+      res,
+      200,
+      "Transactions fetched successfully",
+      transactions
+    );
   } catch (err) {
-    console.error("Error fetching transactions:", err);
-    return res.status(500).json({
-      "status-code": -1,
-      "status-message": "Error fetching transactions",
-      error: err,
-    });
+    return sendErrorResponse(res, 500, "Error fetching transactions", err);
   }
 }
 
@@ -49,10 +46,7 @@ export async function getUserBalance(
   const { walletAddress } = req.params;
 
   if (!walletAddress) {
-    return res.status(400).json({
-      "status-code": -1,
-      "status-message": "Missing wallet address",
-    });
+    return sendErrorResponse(res, 400, "Missing wallet address");
   }
 
   try {
@@ -61,19 +55,10 @@ export async function getUserBalance(
 
     const userBalance = await transactionRepo.fetchUserBalance(walletAddress);
 
-    return res.status(200).json({
-      "status-code": 1,
-      "status-message": "User balance fetched successfully",
-      data: {
-        total_balance: Number(userBalance),
-      },
+    return sendSuccessResponse(res, 200, "User balance fetched successfully", {
+      total_balance: Number(userBalance),
     });
   } catch (err) {
-    console.error("Error fetching user balance:", err);
-    return res.status(500).json({
-      "status-code": -1,
-      "status-message": "Error getting user balance",
-      error: err,
-    });
+    return sendErrorResponse(res, 500, "Error getting user balance", err);
   }
 }
