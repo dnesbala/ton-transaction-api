@@ -14,30 +14,7 @@ export const transactionRoutes = Router();
 transactionRoutes.get(
   "/",
   validateSchema(fetchTransactionsQueryParamsSchema, "query"),
-  async (
-    req: Request<{}, {}, {}, FetchTransactionsQueryParams>,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      await fetchTransactions(req, res);
-    } catch (error) {
-      next(error);
-    }
-  }
+  fetchTransactions
 );
 
-transactionRoutes.get(
-  "/wallet-balance/:walletAddress",
-  async (
-    req: Request<{ walletAddress: string }>,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      await getUserBalance(req, res);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+transactionRoutes.get("/wallet-balance/:walletAddress", getUserBalance);
