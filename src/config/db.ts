@@ -1,5 +1,7 @@
 import { EntityManager, MikroORM } from "@mikro-orm/postgresql";
 import mikroOrmConfig from "./mikro-orm.config";
+import { TransactionRepository } from "../repositories/transaction-repository";
+import { Transaction } from "../entities/transaction.entity";
 
 export const initDB = async () => {
   try {
@@ -15,6 +17,7 @@ export const initDB = async () => {
 export interface DB {
   orm: MikroORM;
   em: EntityManager;
+  transactionRepo: TransactionRepository;
 }
 
 let cache: DB;
@@ -27,7 +30,8 @@ export async function getDB(): Promise<DB> {
 
   cache = {
     orm,
-    em: orm.em.fork(),
+    em: orm.em,
+    transactionRepo: orm.em.getRepository(Transaction),
   };
   return cache;
 }

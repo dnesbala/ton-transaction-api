@@ -1,7 +1,15 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import {
+  Entity,
+  EntityRepositoryType,
+  PrimaryKey,
+  Property,
+} from "@mikro-orm/core";
+import { TransactionRepository } from "../repositories/transaction-repository";
 
-@Entity()
+@Entity({ repository: () => TransactionRepository })
 export class Transaction {
+  [EntityRepositoryType]?: TransactionRepository;
+
   @PrimaryKey()
   id!: number;
 

@@ -1,4 +1,3 @@
-import { TransactionRepository } from "../repositories/transaction-repository";
 import { Transaction } from "../entities/transaction.entity";
 import { TonTransaction } from "../models/ton-transaction.model";
 import {
@@ -12,11 +11,11 @@ import {
   TON_POOL_WITHDRAW_EVENT_HASH,
 } from "../config/constants/ton-constants";
 import { decodeBase64ToCell } from "./ton-utils";
+import { getDB } from "../config/db";
 
 export async function fetchAndStoreTransactions(
   accountAddress: string,
-  date: string | undefined,
-  transactionRepo: TransactionRepository
+  date: string | undefined
 ): Promise<Transaction[]> {
   const filters: any = { accountAddress };
   if (date) {
@@ -26,6 +25,7 @@ export async function fetchAndStoreTransactions(
   }
 
   // Check transactions in DB
+  const { transactionRepo } = await getDB();
   const dbTransactions = await transactionRepo.findTransactions(filters);
   if (dbTransactions.length > 0) {
     return dbTransactions;

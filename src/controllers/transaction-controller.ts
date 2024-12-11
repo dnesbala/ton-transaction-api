@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { getDB } from "../config/db";
-import { TransactionRepository } from "../repositories/transaction-repository";
 import { fetchAndStoreTransactions } from "../services/transaction-service";
 import {
   sendErrorResponse,
@@ -20,12 +19,10 @@ export async function fetchTransactions(
 
   try {
     const { em } = await getDB();
-    const transactionRepo = new TransactionRepository(em);
 
     const transactions = await fetchAndStoreTransactions(
       accountAddress.toString(),
-      date,
-      transactionRepo
+      date
     );
 
     return sendSuccessResponse(
@@ -50,9 +47,7 @@ export async function getUserBalance(
   }
 
   try {
-    const { em } = await getDB();
-    const transactionRepo = new TransactionRepository(em);
-
+    const { transactionRepo } = await getDB();
     const userBalance = await transactionRepo.fetchUserBalance(walletAddress);
 
     return sendSuccessResponse(res, 200, "User balance fetched successfully", {

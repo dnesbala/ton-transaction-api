@@ -1,13 +1,7 @@
-import { EntityManager } from "@mikro-orm/core";
 import { Transaction } from "../entities/transaction.entity";
+import { BaseEntity, EntityRepository } from "@mikro-orm/postgresql";
 
-export class TransactionRepository {
-  private em: EntityManager;
-
-  constructor(em: EntityManager) {
-    this.em = em;
-  }
-
+export class TransactionRepository extends EntityRepository<Transaction> {
   async findTransactions(filters: any): Promise<Transaction[]> {
     return await this.em.find(Transaction, filters);
   }
